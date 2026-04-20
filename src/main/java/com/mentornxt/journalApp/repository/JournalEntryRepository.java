@@ -7,4 +7,5 @@ import com.mentornxt.journalApp.entity.JournalEntry;
 public interface JournalEntryRepository extends MongoRepository<JournalEntry, ObjectId>
 {
 
+
 }

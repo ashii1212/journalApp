@@ -2,6 +2,7 @@ package com.mentornxt.journalApp.controller;
 
 import com.mentornxt.journalApp.entity.JournalEntry;
 import com.mentornxt.journalApp.service.JournalEntryService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,15 +31,38 @@ public class JournalEntryControllerV2
         return myEntry;
     }
     @GetMapping("/Id/{myId}")
-    public JournalEntry getJournalEntryById(@PathVariable String myId)
+    public JournalEntry getJournalEntryById(@PathVariable ObjectId myId)
     {
-         return null;
+         return journalEntryService.findById(myId).orElse(null);
     }
     @DeleteMapping("/Id/{myId}")
-    public JournalEntry deleteEntryById(@PathVariable String myId){
+    public boolean deleteEntryById(@PathVariable ObjectId myId){
 
-        return null;
+       journalEntryService.deleteById(myId);
+       return true;
     }
+    @PutMapping("/{id}")
+    public JournalEntry updateJournalById(@PathVariable("id") ObjectId id,
+                                          @RequestBody JournalEntry newEntry) {
+
+        JournalEntry old = journalEntryService.findById(id).orElse(null);
+
+        if (old != null) {
+
+            old.setTitle(newEntry.getTitle() != null && !newEntry.getTitle().equals("")
+                    ? newEntry.getTitle()
+                    : old.getTitle());
+
+            old.setContent(newEntry.getContent() != null && !newEntry.getContent().equals("")
+                    ? newEntry.getContent()
+                    : old.getContent());
+
+            journalEntryService.saveEntry(old); // save only if exists
+        }
+
+        return old;
+    }
+
 
 
 }
